@@ -1,19 +1,42 @@
-name: C/C++ CI
+# name: C/C++ CI
+
+# on:
+#   push:
+#     branches: [ "main" ]
+#   pull_request:
+#     branches: [ "main" ]
+
+# jobs:
+#   build:
+
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - uses: actions/checkout@v4
+#     - name: make
+#       run: cmake -B build -S .
+#     - name: make check
+#       run: cmake --build build
+
+name: Build and Deploy C++ Project
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
+    runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v4
-    - name: make
-      run: cmake -B build -S .
-    - name: make check
-      run: cmake --build build
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run build inside Docker
+        run: |
+          docker run --rm \
+            -v "${PWD}:/workspace" \
+            -v "/home/zhangzhy/darren/casino-number-guessing-game/build:/output" \
+            pchen-wcgroup-master \
+            bash -c "cd /workspace && mkdir -p build && cd build && cmake .. && make && cp casino_game /output/"
