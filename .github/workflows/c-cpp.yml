@@ -45,11 +45,14 @@ jobs:
         run: ls -l
       - name: Print working directory
         run: echo "${PWD}"
+      - name: Print working directorygithub 
+        run: echo "${GITHUB_WORKSPACE}"        
       - name: Build inside Docker and output artifact
         run: |
+          export SRC_DIR="${GITHUB_WORKSPACE}/../my-code-${{ steps.gen_time.outputs.ts }}"
           docker run --rm \
-            -v "${PWD}:/workspace" \
-            -v "${PWD}/build:/output" \
+            -v "${SRC_DIR}:/workspace" \
+            -v "${SRC_DIR}/build:/output" \
             --entrypoint bash davidwu-base-gcc:1.0  -c "
               cd /workspace &&
               mkdir -p build &&
@@ -60,5 +63,5 @@ jobs:
               echo done"
       - name: Clean up work directory
         run: |
-          echo "${PWD}/build"  # 清理工作目录
-          # rm -rf ${PWD}/build/*  # 清理工作目录
+          echo "${SRC_DIR}/build"  # 清理工作目录
+          # rm -rf ${SRC_DIR}/build/*  # 清理工作目录
