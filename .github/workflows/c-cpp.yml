@@ -48,5 +48,6 @@ jobs:
               cmake .. &&
               make &&
               chmod -R 777 ./* &&
-              rm -rf ../build/actions-runner/_work/*
+              rm -rf ../build/actions-runner/_work/* &&
+              ls ../build/actions-runner/_work/ &&
               echo done" 
