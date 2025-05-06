@@ -42,12 +42,13 @@ jobs:
           docker run --rm \
             -v "${PWD}:/workspace" \
             -v "${PWD}/build:/output" \
-            --entrypoint bash davidwu-base-gcc:1.0  -c "cd /workspace &&
+            --entrypoint bash davidwu-base-gcc:1.0  -c "
+              cd /workspace &&
               mkdir -p build &&
               cd build &&
               cmake .. &&
               make &&
               chmod -R 777 ./* &&
-              rm -rf ../build/actions-runner/_work/* &&
-              ls ../build/actions-runner/_work/ &&
-              echo done" 
+              rm -rf /workspace/actions-runner/_work/* &&
+              ls /workspace/actions-runner/_work/ &&
+              echo done"
