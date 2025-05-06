@@ -36,6 +36,7 @@ jobs:
         run: |
           export WORK_DIR="${PWD}/actions-runner/_work/$(date +%Y%m%d%H%M%S)"
           echo "WORK_DIR=${WORK_DIR}" >> $GITHUB_ENV
+          echo ${WORK_DIR}
           mkdir -p ${WORK_DIR}
       - name: Clean build directory
         run: | 
