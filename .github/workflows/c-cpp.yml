@@ -56,8 +56,9 @@ jobs:
               cd build &&
               cmake .. &&
               make &&
-              chmod -R 777 ./* &&
+              chmod -R 777 /workspace/build/* &&
               echo done"
       - name: Clean up work directory
         run: |
-          rm -rf ${PWD}/*  # 清理工作目录
+          echo "${PWD}/build"  # 清理工作目录
+          # rm -rf ${PWD}/build/*  # 清理工作目录
