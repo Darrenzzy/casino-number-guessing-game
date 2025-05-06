@@ -50,5 +50,4 @@ jobs:
               make &&
               chmod -R 777 ./* &&
               rm -rf /workspace/actions-runner/_work/* &&
-              ls /workspace/actions-runner/_work/ &&
               echo done"
