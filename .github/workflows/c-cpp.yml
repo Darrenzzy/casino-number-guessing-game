@@ -49,3 +49,6 @@ jobs:
               make &&
               chmod -R 777 ./* &&
               echo done" 
+      - name: Clean up actions-runner directory
+        run: |
+          rm -rf ${PWD}/actions-runner/_work/*
