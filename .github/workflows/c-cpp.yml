@@ -18,7 +18,7 @@
 #     - name: make check
 #       run: cmake --build build
 
-name: Build and Deploy C++ Project
+name: Build C++ Project in Docker
 
 on:
   push:
@@ -28,15 +28,22 @@ on:
 
 jobs:
   build:
+    name: Build with Docker on Self-hosted Runner
     runs-on: self-hosted
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run build inside Docker
+      - name: Build inside Docker and output artifact
         run: |
           docker run --rm \
             -v "${PWD}:/workspace" \
-            -v "/home/zhangzhy/darren/casino-number-guessing-game/build:/output" \
-            pchen-wcgroup-master:2.0 \
-            bash -c "cd /workspace && mkdir -p build && cd build && cmake .. && make && cp casino_game /output/"
+            -v "${PWD}/build:/output" \
+            --entrypoint bash davidwu-base-gcc:1.0  -c "cd /workspace &&
+              mkdir -p build &&
+              cd build &&
+              cmake .. &&
+              make &&
+              chmod -R 777 ./* &&
+              echo done" 
