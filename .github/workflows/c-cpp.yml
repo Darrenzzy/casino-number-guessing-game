@@ -32,13 +32,11 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Clean build directory
         run: |
           rm -rf ${PWD}/actions-runner/_work/casino-number-guessing-game/casino-number-guessing-game/build/*
-
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Build inside Docker and output artifact
         run: |
           docker run --rm \
