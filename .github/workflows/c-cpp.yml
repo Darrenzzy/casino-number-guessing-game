@@ -38,5 +38,5 @@ jobs:
           docker run --rm \
             -v "${PWD}:/workspace" \
             -v "/home/zhangzhy/darren/casino-number-guessing-game/build:/output" \
-            pchen-wcgroup-master \
+            pchen-wcgroup-master:2.0 \
             bash -c "cd /workspace && mkdir -p build && cd build && cmake .. && make && cp casino_game /output/"
