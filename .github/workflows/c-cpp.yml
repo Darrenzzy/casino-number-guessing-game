@@ -33,8 +33,7 @@ jobs:
 
     steps:
       - name: Clean build directory
-        run: |
-          chmod -R 777 ${PWD}/actions-runner
+        run: | 
           rm -rf ${PWD}/actions-runner/_work/*
       - name: Checkout repository
         uses: actions/checkout@v4
