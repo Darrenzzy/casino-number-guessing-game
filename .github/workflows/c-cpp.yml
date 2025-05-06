@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Clean build directory
         run: |
-          sudo chmod -R 777 ${PWD}/actions-runner
+          chmod -R 777 ${PWD}/actions-runner
           rm -rf ${PWD}/actions-runner/_work/*
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -49,8 +49,5 @@ jobs:
               cmake .. &&
               make &&
               chmod -R 777 ./* &&
+              rm -rf ../build/actions-runner/_work/*
               echo done" 
-      - name: Clean up actions-runner directory
-        run: |
-          sudo chmod -R 777 ${PWD}/actions-runner
-          rm -rf ${PWD}/actions-runner/_work/*
