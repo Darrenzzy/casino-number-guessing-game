@@ -34,7 +34,8 @@ jobs:
     steps:
       - name: Clean build directory
         run: |
-          rm -rf ${PWD}/actions-runner/_work
+          sudo chmod -R 777 ${PWD}/actions-runner
+          rm -rf ${PWD}/actions-runner/_work/*
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Build inside Docker and output artifact
@@ -51,4 +52,5 @@ jobs:
               echo done" 
       - name: Clean up actions-runner directory
         run: |
+          sudo chmod -R 777 ${PWD}/actions-runner
           rm -rf ${PWD}/actions-runner/_work/*
