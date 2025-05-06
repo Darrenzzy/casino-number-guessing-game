@@ -32,21 +32,23 @@ jobs:
     runs-on: self-hosted
 
     steps:
-      - name: Set up unique work directory
-        run: |
-          export WORK_DIR="${PWD}/actions-runner/_work/$(date +%Y%m%d%H%M%S)"
-          echo "WORK_DIR=${WORK_DIR}" >> $GITHUB_ENV
-          echo ${WORK_DIR}
-          mkdir -p ${WORK_DIR}
-      - name: Clean build directory
-        run: | 
-          rm -rf ${WORK_DIR}/* 
-      - name: Checkout repository
+      - name: Generate timestamp
+        id: gen_time
+        run: echo "ts=$(date +'%Y%m%d_%H%M%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout repository to dynamic path
         uses: actions/checkout@v4
+        with:
+          path: my-code-${{ steps.gen_time.outputs.ts }}
+
+      - name: Show checked-out path
+        run: ls -l
+      - name: Print working directory
+        run: echo "${PWD}"
       - name: Build inside Docker and output artifact
         run: |
           docker run --rm \
-            -v "${WORK_DIR}:/workspace" \
+            -v "${PWD}:/workspace" \
             -v "${PWD}/build:/output" \
             --entrypoint bash davidwu-base-gcc:1.0  -c "
               cd /workspace &&
@@ -58,4 +60,4 @@ jobs:
               echo done"
       - name: Clean up work directory
         run: |
-          rm -rf ${WORK_DIR}  # 清理工作目录
+          rm -rf ${PWD}/*  # 清理工作目录
