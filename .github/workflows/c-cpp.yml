@@ -32,15 +32,20 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Set up unique work directory
+        run: |
+          export WORK_DIR="${PWD}/actions-runner/_work/$(date +%Y%m%d%H%M%S)"
+          echo "WORK_DIR=${WORK_DIR}" >> $GITHUB_ENV
+          mkdir -p ${WORK_DIR}
       - name: Clean build directory
         run: | 
-          rm -rf ${PWD}/actions-runner/_work/*
+          rm -rf ${WORK_DIR}/* 
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Build inside Docker and output artifact
         run: |
           docker run --rm \
-            -v "${PWD}:/workspace" \
+            -v "${WORK_DIR}:/workspace" \
             -v "${PWD}/build:/output" \
             --entrypoint bash davidwu-base-gcc:1.0  -c "
               cd /workspace &&
@@ -49,5 +54,7 @@ jobs:
               cmake .. &&
               make &&
               chmod -R 777 ./* &&
-              rm -rf /workspace/actions-runner/_work/* &&
               echo done"
+      - name: Clean up work directory
+        run: |
+          rm -rf ${WORK_DIR}  # 清理工作目录
