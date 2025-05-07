@@ -1,0 +1,40 @@
+# .github/workflows/trigger_repo_b_ci.yml
+name: Trigger Repo B CI on Update
+
+on:
+  # 当 push 到 main 分支时触发此 workflow
+  push:
+    branches:
+      - main
+      # 也可以添加其他分支，例如 - master
+      
+  # 或者你希望在 tag 创建时触发
+  # create:
+  #   tags:
+  #     - '*'
+
+jobs:
+  trigger-b-ci:
+    # 使用任意 runner 即可，因为这一步只是调用 API
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Trigger Repo B repository_dispatch event
+      uses: peter-evans/repository-dispatch@v2 # 使用一个现成的 action 来发送 dispatch 事件
+      with:
+        # 这是关键：需要一个对仓库 B 有权限的 token
+        # 这个 token 需要存储在仓库 A 的 secrets 中 (例如命名为 REPO_B_DISPATCH_TOKEN)
+        token: ${{ secrets.REPO_B_DISPATCH_TOKEN }} 
+        # 指定目标仓库 (格式: owner/repo_name)
+        # 将 YOUR_REPO_B_OWNER 和 YOUR_REPO_B_NAME 替换为仓库 B 的实际所有者和仓库名
+        repository: Darrenzzy/casino-son-B
+        # 定义一个事件类型，仓库 B 可以根据这个类型来过滤
+        event-type: triggered-by-repo-a-update
+        # (可选) 发送一个 payload，可以在仓库 B 的 workflow 中访问这些信息
+        # 例如，可以发送仓库 A 的 commit SHA 或分支信息
+        client-payload: |
+          {
+            "ref": "${{ github.ref }}",
+            "sha": "${{ github.sha }}",
+            "triggered_by_repo": "${{ github.repository }}"
+          }
