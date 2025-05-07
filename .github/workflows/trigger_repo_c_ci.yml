@@ -25,7 +25,7 @@ jobs:
         token: ${{ secrets.REPO_C_DISPATCH_TOKEN }} 
         # 指定目标仓库 (格式: owner/repo_name)
         # 将 YOUR_REPO_B_OWNER 和 YOUR_REPO_B_NAME 替换为仓库 B 的实际所有者和仓库名
-        repository: Darrenzzy/casino-son-C
+        repository: Darrenzzy/casino-C
         # 定义一个事件类型，仓库 B 可以根据这个类型来过滤
         event-type: triggered-by-repo-a-update
         # (可选) 发送一个 payload，可以在仓库 B 的 workflow 中访问这些信息
