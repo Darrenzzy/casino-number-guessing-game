@@ -10,7 +10,7 @@ jobs:
   build:
     name: Build with Docker on Self-hosted Runner
     runs-on: self-hosted
-
+    environment: dev
     steps:
       - name: Generate timestamp
         id: gen_time
@@ -22,7 +22,7 @@ jobs:
       - name: Build inside Docker and output artifact
         run: |
           export SRC_DIR="${GITHUB_WORKSPACE}/my-code-${{ steps.gen_time.outputs.ts }}"
-          export OUTPUT_DIR=${{ secrets.OUTPUT_DIR }}/A/build
+          export OUTPUT_DIR=${{ vars.OUTPUT_DIR }}/A/build
           mkdir -p "${OUTPUT_DIR}"        
           mkdir -p "${SRC_DIR}/build"        
           docker run --rm \
