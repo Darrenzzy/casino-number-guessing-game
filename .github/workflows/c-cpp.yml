@@ -2,9 +2,9 @@ name: Build C++ Project in Docker
 
 on:
   push:
-    branches: [ main ]
+    branches: [ dispatch ]
   pull_request:
-    branches: [ main ]
+    branches: [ dispatch ]
 
 jobs:
   build:
@@ -22,20 +22,36 @@ jobs:
       - name: Build inside Docker and output artifact
         run: |
           export SRC_DIR="${GITHUB_WORKSPACE}/my-code-${{ steps.gen_time.outputs.ts }}"
-          echo "${SRC_DIR}"        
-          ls -l "${SRC_DIR}"        
           mkdir "${SRC_DIR}/build"        
           docker run --rm \
             -v "${SRC_DIR}:/workspace" \
             -v "${SRC_DIR}/build:/output" \
+            -w	/workspace \
             --entrypoint bash davidwu-base-gcc:1.0  -c "
-              cd /workspace &&
               mkdir -p build &&
               cd build &&
               cmake .. &&
-              make &&
+              cmake --build . &&
+              cmake --install . &&
               chmod -R 777 /workspace/build/* &&
               echo done"
+      - name: Trigger Repo C repository_dispatch event
+        uses: peter-evans/repository-dispatch@v2 # 使用一个现成的 action 来发送 dispatch 事件
+        with: 
+          token: ${{ secrets.REPO_C_DISPATCH_TOKEN }} 
+          # 指定目标仓库 (格式: owner/repo_name)
+          # 将 YOUR_REPO_B_OWNER 和 YOUR_REPO_B_NAME 替换为仓库 B 的实际所有者和仓库名
+          repository: Darrenzzy/casino-C
+          # 定义一个事件类型，仓库 B 可以根据这个类型来过滤
+          event-type: triggered-by-repo-a-update
+          # (可选) 发送一个 payload，可以在仓库 B 的 workflow 中访问这些信息
+          # 例如，可以发送仓库 A 的 commit SHA 或分支信息
+          client-payload: |
+            {
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "triggered_by_repo": "${{ github.repository }}"
+            }
       - name: Clean up work directory
         run: |
           echo "${SRC_DIR}/build"  # 清理工作目录
