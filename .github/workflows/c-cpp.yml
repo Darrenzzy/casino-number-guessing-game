@@ -37,6 +37,41 @@ jobs:
               cp ./casino_game /output &&
               chmod -R 777 /output/* &&
               echo done"
+      - name: Get latest commit message
+        id: get_commit_msg
+        run: |
+          msg=$(git -C my-code-${{ steps.gen_time.outputs.ts }} log -1 --pretty=%B)
+          echo "message=$msg" >> "$GITHUB_OUTPUT" 
+      - name: Generate hash and build info CSV
+        run: |
+          export OUTPUT_DIR=${{ vars.OUTPUT_DIR }}/A/build
+          HASH_FILE="${OUTPUT_DIR}/hashes.csv"
+          BUILD_INFO_FILE="${OUTPUT_DIR}/build_info.csv"
+          {
+            echo "key,value"
+            echo "repo_name,${{ github.repository }}"
+            echo "commit_msg,${{ steps.get_commit_msg.outputs.message }}"
+            echo "commit_tag,${{ github.ref }}"
+            echo "branch,${{ github.ref_name }}"
+            echo "commit_hash,${{ github.sha }}"
+            echo "actor,${{ github.actor }}"
+            echo "event_name,${{ github.event_name }}" 
+            echo "image_name,davidwu-base-gcc" 
+            echo "image_hash,a2e1c068baa8" 
+            echo "gcc_version,xxxx" 
+            echo "os_version,xxx" 
+            echo "mount_path,${OUTPUT_DIR}"
+          } > "$BUILD_INFO_FILE"
+          echo "filename,sha256" > "$HASH_FILE"
+          find "${OUTPUT_DIR}" -type f -executable | while read file; do
+            hash=$(sha256sum "$file" | awk '{print $1}')
+            rel_path="${file#${OUTPUT_DIR}/}"
+            echo "${rel_path},${hash}" >> "$HASH_FILE"
+          done
+          echo "✅ Hash CSV generated at: ${HASH_FILE}"
+          cat "$HASH_FILE"
+          echo "✅ build info CSV generated at: ${BUILD_INFO_FILE}"
+          cat "$BUILD_INFO_FILE"
       - name: Trigger Repo C repository_dispatch event
         uses: peter-evans/repository-dispatch@v2 # 使用一个现成的 action 来发送 dispatch 事件
         with: 
