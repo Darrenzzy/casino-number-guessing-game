@@ -65,8 +65,6 @@ jobs:
             echo "event_name,${{ github.event_name }}" 
             echo "image_name,davidwu-base-gcc" 
             echo "image_hash,a2e1c068baa8" 
-            echo "gcc_version,xxxx" 
-            echo "os_version,xxx" 
             echo "mount_path,${OUTPUT_DIR}"
           } > "$BUILD_INFO_FILE"
           echo "filename,sha256" > "$HASH_FILE"
