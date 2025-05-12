@@ -23,19 +23,22 @@ jobs:
         run: |
           export SRC_DIR="${GITHUB_WORKSPACE}/my-code-${{ steps.gen_time.outputs.ts }}"
           export OUTPUT_DIR=${{ vars.OUTPUT_DIR }}/A/build
+          export LIB_DIR=${{ vars.OUTPUT_DIR }}
           mkdir -p "${OUTPUT_DIR}"        
           mkdir -p "${SRC_DIR}/build"        
           docker run --rm \
             -v "${SRC_DIR}:/workspace" \
             -v "${OUTPUT_DIR}:/output" \
+            -v "${LIB_DIR}:/custom_lib" \
             -w	/workspace \
             --entrypoint bash davidwu-base-gcc:1.0  -c "
               cd build &&
-              cmake .. &&
+              cmake -DCMAKE_CXX_FLAGS="-I/custom_lib" .. &&
               cmake --build . &&
               cmake --install . &&
+              chmod -R 777 ./* &&
               cp ./casino_game /output &&
-              chmod -R 777 /output/* &&
+              cp ./*.h /custom_lib &&
               echo done"
       - name: Get latest commit message
         id: get_commit_msg
