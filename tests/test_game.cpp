@@ -1,5 +1,5 @@
 #include <iostream>
-#include "../src/game.h"
+#include "game.h"
 #include <cassert>
 
 void testGame() {
